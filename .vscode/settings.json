@@ -1,0 +1,17 @@
+{
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    { "language": "typescript", "autoFix": true },
+    { "language": "typescriptreact", "autoFix": true }
+  ],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#159431",
+    "titleBar.inactiveBackground": "#0e6b1d99",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "eslint.autoFixOnSave": true
+}
