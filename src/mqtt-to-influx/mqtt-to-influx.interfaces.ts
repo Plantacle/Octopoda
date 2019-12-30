@@ -1,15 +1,4 @@
-export interface Packet {
-  cmd: string
-  brokerId: string
-  brokerCounter: number
-  topic: string
-  payload: Buffer
-  qos: number
-  retain: boolean
-  messageId: number
-}
-
-export interface Measurements {
+export interface Measurement {
   temperature: number
   humidity: number
 }

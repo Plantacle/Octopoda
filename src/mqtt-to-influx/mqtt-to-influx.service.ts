@@ -1,42 +1,25 @@
-import {
-  Injectable,
-  Logger,
-  OnModuleDestroy,
-  OnModuleInit,
-} from '@nestjs/common'
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
 import Aedes from 'aedes'
-import { FieldType as InfluxFieldType, InfluxDB } from 'influx'
 import Net from 'net'
+import { MeasurementsService } from 'src/measurements/measurements.service'
 
-import { Measurements } from './mqtt-to-influx.interfaces'
+import { Measurement } from './mqtt-to-influx.interfaces'
 
 @Injectable()
 export class MqttToInfluxService implements OnModuleInit, OnModuleDestroy {
+  constructor(private readonly sensorDataService: MeasurementsService) {}
   public onModuleInit(): void {
     this.startMqttServer()
     this.subscribe()
   }
   public onModuleDestroy(): void {
-    this.stopMqttServer()
+    this.mqtt.close()
+    this.mqttServer.close()
   }
 
   private readonly logger = new Logger(MqttToInfluxService.name, true)
-  private mqtt = Aedes()
+  private mqtt = Aedes({})
   private mqttServer = Net.createServer(this.mqtt.handle)
-  private influx = new InfluxDB({
-    host: 'localhost',
-    database: 'testdata',
-    schema: [
-      {
-        measurement: 'sensor_data',
-        fields: {
-          temperature: InfluxFieldType.FLOAT,
-          humidity: InfluxFieldType.FLOAT,
-        },
-        tags: ['device'],
-      },
-    ],
-  })
 
   private startMqttServer(): void {
     this.mqttServer.listen(1883, () => {
@@ -44,34 +27,19 @@ export class MqttToInfluxService implements OnModuleInit, OnModuleDestroy {
     })
   }
 
-  private stopMqttServer(): void {
-    this.mqttServer.close()
-  }
-
   private subscribe(): void {
     this.mqtt.subscribe(
       '/plantacle/#',
       (packet: any, next) => {
-        let measurements: Measurements
+        let measurement: Measurement
         try {
-          measurements = JSON.parse(packet.payload.toString())
+          measurement = JSON.parse(packet.payload.toString())
         } catch (error) {
           return
         }
         const deviceId = packet.topic.substring('/plantacle/'.length)
-        // console.log(deviceId);
-        // console.log(measurements.temperature);
-        this.influx.writeMeasurement('sensor_data', [
-          {
-            tags: {
-              device: deviceId,
-            },
-            fields: {
-              temperature: measurements.temperature,
-              humidity: measurements.humidity,
-            },
-          },
-        ])
+
+        this.sensorDataService.addMeasurement(deviceId, measurement)
         next()
       },
       () => {
