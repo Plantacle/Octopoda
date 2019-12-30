@@ -3,7 +3,7 @@ import Aedes from 'aedes'
 import Net from 'net'
 import { MeasurementsService } from 'src/measurements/measurements.service'
 
-import { Measurement } from './mqtt-to-influx.interfaces'
+import { Measurement } from '../measurements/dto/measurement.dto'
 
 @Injectable()
 export class MqttToInfluxService implements OnModuleInit, OnModuleDestroy {

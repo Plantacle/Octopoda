@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { escape as InfluxEscape, FieldType as InfluxFieldType, InfluxDB, IResults } from 'influx'
-import { Measurement } from 'src/mqtt-to-influx/mqtt-to-influx.interfaces'
+import { Measurement } from 'src/measurements/dto/measurement.dto'
 
 @Injectable()
 export class MeasurementsService {
