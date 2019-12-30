@@ -7,6 +7,7 @@ declare const module: any
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule)
   app.setGlobalPrefix('api')
+
   await app.listen(3123)
 
   if (module.hot) {
