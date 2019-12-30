@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import Helmet from 'helmet'
 
 import { AppModule } from './app.module'
 
@@ -25,6 +26,8 @@ async function bootstrap(): Promise<void> {
       displayRequestDuration: true,
     },
   })
+
+  app.use(Helmet())
 
   await app.listen(3123)
 
