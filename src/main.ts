@@ -1,3 +1,4 @@
+import { BadRequestException, ValidationError, ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import Helmet from 'helmet'
@@ -16,6 +17,13 @@ async function bootstrap(): Promise<void> {
     new DocumentBuilder()
       .setTitle('Plantacle REST API')
       .setVersion('1.0')
+      .addBearerAuth({
+        type: 'http',
+        bearerFormat: 'JWT',
+        description: 'Obtain an access token by posting to /api/auth',
+      })
+      .addTag('Authentication')
+      .addTag('Users')
       .addTag('Measurements')
       .build(),
   )
@@ -27,6 +35,15 @@ async function bootstrap(): Promise<void> {
     },
   })
 
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      validationError: { target: false, value: false },
+      exceptionFactory: (errors: ValidationError[]): BadRequestException =>
+        new BadRequestException(errors, 'ValidationError'),
+    }),
+  )
   app.use(Helmet())
 
   await app.listen(3123)
