@@ -33,7 +33,7 @@ export class UsersController {
       return newUser
     } catch (error) {
       if (error.code && error.code === 11000) {
-        throw new BadRequestException('Username already in use', 'UsernameInUseError')
+        throw new BadRequestException('Email already in use', 'EmailInUseError')
       } else {
         throw error
       }

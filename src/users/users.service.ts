@@ -20,10 +20,10 @@ export class UsersService {
     return this.userRepository.findOne(id)
   }
 
-  public async getUserByUsername(username: string): Promise<User> {
+  public async getUserByEmail(email: string): Promise<User> {
     return this.userRepository.findOne({
       where: {
-        username: username,
+        email: email,
       },
     })
   }

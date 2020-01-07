@@ -10,13 +10,16 @@ import { LoginDto } from './dto/login.dto'
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   public constructor(private readonly authService: AuthService) {
-    super()
+    super({
+      usernameField: 'email',
+      passwordField: 'password',
+    })
   }
 
-  public async validate(username: string, password: string): Promise<Omit<User, 'password'>> {
+  public async validate(email: string, password: string): Promise<Omit<User, 'password'>> {
     // Use class-validator to validate type, Nestjs doesn't do this automatically here because this is an authguard
     const loginDto = new LoginDto()
-    loginDto.username = username
+    loginDto.email = email
     loginDto.password = password
     try {
       await validateOrReject(loginDto)
@@ -24,7 +27,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       throw new BadRequestException(errors, 'ValidationError')
     }
 
-    const user = await this.authService.validateUser(loginDto.username, loginDto.password)
+    const user = await this.authService.validateUser(loginDto.email, loginDto.password)
     if (!user) {
       throw new UnauthorizedException()
     }

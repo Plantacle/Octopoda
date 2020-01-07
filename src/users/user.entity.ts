@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import bcrypt from 'bcrypt'
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
 import { BeforeInsert, BeforeUpdate, Column, Entity, Index, ObjectIdColumn } from 'typeorm'
 
 @Entity({
@@ -18,10 +18,11 @@ export class User {
     unique: true,
   })
   @Column()
-  @ApiProperty({ example: 'johndoe' })
+  @ApiProperty({ example: 'johndoe@example.com' })
   @IsString()
   @IsNotEmpty()
-  username: string
+  @IsEmail()
+  email: string
 
   @Column()
   @ApiProperty({

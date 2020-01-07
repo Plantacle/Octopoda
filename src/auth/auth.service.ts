@@ -10,8 +10,8 @@ import { AccessTokenDto } from './dto/access-token.dto'
 export class AuthService {
   constructor(private readonly usersService: UsersService, private readonly jwtService: JwtService) {}
 
-  public async validateUser(username: string, password: string): Promise<Omit<User, 'password'> | null> {
-    const user = await this.usersService.getUserByUsername(username)
+  public async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {
+    const user = await this.usersService.getUserByEmail(email)
     if (user && (await Bcrypt.compare(password, user.password))) {
       delete user.password
       return user

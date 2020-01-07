@@ -25,7 +25,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Create an access token' })
   @UseGuards(AuthGuard('local'))
   @ApiCreatedResponse({ description: 'Login successful', type: AccessTokenDto })
-  @ApiUnauthorizedResponse({ description: 'Invalid username or password' })
+  @ApiUnauthorizedResponse({ description: 'Invalid email or password' })
   public async login(@ReqUser() user: User, @Body() loginDto: LoginDto): Promise<AccessTokenDto> {
     return this.authService.getAccessToken(user, loginDto.rememberMe)
   }
