@@ -1,11 +1,15 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger'
+import { ReqUser } from 'src/common/decorators/req-user.decorator'
 
 import { User } from './user.entity'
 import { UsersService } from './users.service'
@@ -17,15 +21,19 @@ import { UsersService } from './users.service'
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Get('me')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get info of authenticated user' })
+  @ApiOkResponse({ description: 'User info', type: User })
+  public async getUser(@ReqUser() user: User): Promise<User> {
+    return user
+  }
+
   @Post()
-  @ApiOperation({
-    summary: 'Register a new user',
-  })
-  @ApiCreatedResponse({
-    description: 'User registered successfully',
-    type: User,
-  })
-  public async adduser(@Body() user: User): Promise<Omit<User, 'password'>> {
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiCreatedResponse({ description: 'User registered successfully', type: User })
+  public async addUser(@Body() user: User): Promise<Omit<User, 'password'>> {
     user.roles = ['user']
     try {
       const newUser = await this.usersService.updateOrCreateUser(user)
