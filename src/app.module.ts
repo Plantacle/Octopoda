@@ -6,6 +6,7 @@ import { MeasurementsModule } from './measurements/measurements.module'
 import { MqttToInfluxModule } from './mqtt-to-influx/mqtt-to-influx.module'
 import { User } from './users/user.entity'
 import { UsersModule } from './users/users.module'
+import { DeviceModule } from './device/device.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UsersModule } from './users/users.module'
     MeasurementsModule,
     UsersModule,
     AuthModule,
+    DeviceModule,
   ],
 })
 export class AppModule {}

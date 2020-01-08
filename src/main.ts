@@ -24,6 +24,7 @@ async function bootstrap(): Promise<void> {
       })
       .addTag('Authentication')
       .addTag('Users')
+      .addTag('Device')
       .addTag('Measurements')
       .build(),
   )

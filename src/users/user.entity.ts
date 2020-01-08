@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import bcrypt from 'bcrypt'
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
 import { BeforeInsert, BeforeUpdate, Column, Entity, Index, ObjectIdColumn } from 'typeorm'
@@ -39,6 +39,13 @@ export class User {
     readOnly: true,
   })
   roles: string[]
+
+  @Column()
+  @ApiPropertyOptional({
+    example: '6546710d8bf6bb1a6ad45f81aaf66a4031698825',
+    readOnly: true,
+  })
+  deviceId?: string
 
   @BeforeInsert()
   @BeforeUpdate()

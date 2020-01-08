@@ -28,7 +28,7 @@ export class UsersController {
   public async adduser(@Body() user: User): Promise<Omit<User, 'password'>> {
     user.roles = ['user']
     try {
-      const newUser = await this.usersService.newUser(user)
+      const newUser = await this.usersService.updateOrCreateUser(user)
       delete newUser.password
       return newUser
     } catch (error) {
