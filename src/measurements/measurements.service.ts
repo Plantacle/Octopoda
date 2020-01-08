@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { escape as InfluxEscape, FieldType as InfluxFieldType, InfluxDB, IResults } from 'influx'
+import { escape as InfluxEscape, FieldType as InfluxFieldType, InfluxDB, IResults, measurement } from 'influx'
 import { Measurement } from 'src/measurements/dto/measurement.dto'
 
 @Injectable()
@@ -33,19 +33,26 @@ export class MeasurementsService {
     ])
   }
 
-  public async getMeasurements(deviceId: string, duration = '1h'): Promise<IResults<Measurement>> {
-    try {
-      return this.influx.query<Measurement>(
-        `SELECT ROUND(MEAN("temperature")*100)/100 as "temperature",
+  public async getMeasurements(deviceId: string, hours = 1): Promise<IResults<Measurement>> {
+    return this.influx.query<Measurement>(
+      `SELECT ROUND(MEAN("temperature")*100)/100 as "temperature",
         ROUND(MEAN("humidity")*10)/10 as "humidity"
         FROM "sensor_data"
         WHERE ("device" = ${InfluxEscape.stringLit(deviceId)})
-        AND time > now() - ${duration}
+        AND time > now() - ${hours}h
         GROUP BY time(1m)
         fill(none)`,
+    )
+  }
+
+  public async getLatestMeasurement(deviceId: string): Promise<Measurement> {
+    return (
+      await this.influx.query<Measurement>(
+        `SELECT LAST("temperature") as "temperature",
+        "humidity"
+        FROM "sensor_data"
+        WHERE ("device" = ${InfluxEscape.stringLit(deviceId)})`,
       )
-    } catch (error) {
-      console.log(error)
-    }
+    )[0]
   }
 }
